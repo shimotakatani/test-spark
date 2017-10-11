@@ -46,6 +46,8 @@ public class TestDao {
         return collection.count();
     }
 
-
+    public Document getUserById(Long id){
+        return collection.find().first();
+    }
 
 }
