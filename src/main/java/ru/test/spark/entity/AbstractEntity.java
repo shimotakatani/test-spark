@@ -4,14 +4,14 @@ import org.bson.types.ObjectId;
 import ru.test.spark.enums.EntityStatusEnum;
 
 /**
+ * Абстрактная сущность
  * create time 11.10.2017
  *
  * @author nponosov
  */
 public abstract class AbstractEntity {
 
-    private Long id;
-    private ObjectId objectId;
+    private ObjectId id;
     private Long createTime;
     private Long updateTime;
     private EntityStatusEnum status;
@@ -21,20 +21,12 @@ public abstract class AbstractEntity {
 
     }
 
-    public Long getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(ObjectId id) {
         this.id = id;
-    }
-
-    public ObjectId getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
     }
 
     public Long getCreateTime() {

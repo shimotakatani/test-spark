@@ -1,5 +1,6 @@
 package ru.test.spark.dao.interfaces;
 
+import org.bson.types.ObjectId;
 import ru.test.spark.filters.AbstractFilter;
 
 import java.util.List;
@@ -18,14 +19,14 @@ public interface GenericDao<T> {
      * @return Единственную сущность или null если ничего не нашли
      * @author nponosov
      */
-    T getById(Long id);
+    T getById(ObjectId id);
 
     /**
      * Удаляет сущность по её id
      * @param id - id сущности
      * @author nponosov
      */
-    void deleteById(Long id);
+    void deleteById(ObjectId id);
 
     /**
      * Получить все активные сущности
@@ -54,13 +55,19 @@ public interface GenericDao<T> {
      * @param entity - экземпляр сущности(должен быть с id)
      * @return обновлённую сущность
      */
-    T update(T entity);
+    T update(T entity, ObjectId id);
 
     /**
      * Вставить сущность
      * @param entity - новый экземпляр сущности
      * @return вставленный экземпляр сущности
      */
-    T insert(T entity);
+    void insert(T entity);
+
+    //ненужный интерфейс, потом удалить
+    @Deprecated
+    T getFirst();
+
+    Long getActiveCount();
 
 }
