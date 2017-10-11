@@ -1,18 +1,17 @@
-package ru.test.spark.filters;
-
+package ru.test.spark.entity;
 
 /**
- * Фильтр для сущности Отдел
+ * Сущность Отдел
  * create time 11.10.2017
  *
  * @author nponosov
  */
-public class DepartmentFilter {
+public class DepartmentEntity extends AbstractEntity {
 
     private String name;
 
-    public DepartmentFilter(){
-        super();
+    public DepartmentEntity(){
+
     }
 
     public String getName() {

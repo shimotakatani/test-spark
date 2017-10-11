@@ -1,23 +1,25 @@
-package ru.test.spark.dto;
+package ru.test.spark.entity;
 
 import org.bson.types.ObjectId;
 import ru.test.spark.enums.EntityStatusEnum;
 
 /**
- * Абстрактное DTO
  * create time 11.10.2017
  *
  * @author nponosov
  */
-public abstract class AbstractDto {
+public abstract class AbstractEntity {
+
     private Long id;
     private ObjectId objectId;
     private Long createTime;
     private Long updateTime;
     private EntityStatusEnum status;
-    //сюда бы ещё юзера логировать, но так как мы без авторизации....
+    protected static String collectionName;
 
-    protected AbstractDto(){}
+    protected AbstractEntity(){
+
+    }
 
     public Long getId() {
         return id;

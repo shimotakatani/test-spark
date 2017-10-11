@@ -3,6 +3,7 @@ package ru.test.spark.filters;
 import ru.test.spark.enums.EntityStatusEnum;
 
 /**
+ * Абстрактный фильтр для запросов
  * create time 11.10.2017
  *
  * @author nponosov

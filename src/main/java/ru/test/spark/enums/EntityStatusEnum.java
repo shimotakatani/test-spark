@@ -1,6 +1,7 @@
 package ru.test.spark.enums;
 
 /**
+ * Перечисление для статуса сущности
  * create time 11.10.2017
  *
  * @author nponosov
