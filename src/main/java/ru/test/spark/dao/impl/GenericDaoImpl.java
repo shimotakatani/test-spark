@@ -4,15 +4,26 @@ import com.mongodb.Block;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.eclipse.jetty.util.log.Log;
 import ru.test.spark.consts.CollectionsConst;
 import ru.test.spark.dao.interfaces.GenericDao;
+import ru.test.spark.entity.AbstractEntity;
 import ru.test.spark.enums.EntityStatusEnum;
 import ru.test.spark.filters.AbstractFilter;
+import ru.test.spark.orm.PostgreClient;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnit;
+
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
 
+import java.lang.reflect.ParameterizedType;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Абстрактное DAO
@@ -23,46 +34,56 @@ import java.util.List;
 public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
     //Коллекция с которой работает DAO
-    protected MongoCollection<T> collection;
+    protected Connection connection = PostgreClient.getPostgresConnection();
 
-    protected GenericDaoImpl(){
+    @PersistenceUnit(name = "test")
+    EntityManager em;
 
+    private Class<T> entityClass;
+
+    private Class<T> getEntityClass() {
+        if (entityClass == null) {
+            ParameterizedType genericSuperClass;
+            if (getClass().getGenericSuperclass() instanceof ParameterizedType) {
+                genericSuperClass = (ParameterizedType) getClass().getGenericSuperclass();
+            } else {
+                genericSuperClass = (ParameterizedType) getClass().getSuperclass().getGenericSuperclass();
+            }
+            entityClass = (Class) genericSuperClass.getActualTypeArguments()[0];
+        }
+        return entityClass;
     }
 
     @Override
-    public T getById(ObjectId id) {
-        return collection.find(eq(CollectionsConst.Collections.Abstract.ID, id)).first();
+    public T getById(UUID id) {
+
+        Object o = em.find(getEntityClass(), id);
+        return o != null ? (T) o : null;
     }
 
     @Override
-    public void deleteById(ObjectId id) {
-        collection.deleteOne(eq(CollectionsConst.Collections.Abstract.ID, id));
+    public void deleteById(UUID id) {
+        Object ref = null;
+        try {
+            ref = em.getReference(getEntityClass(), id);
+        } catch (Exception e) {
+            System.out.println("Сущность с id = :id не найдена для удаления".replace(":id", id.toString()));
+        }
+        if ( (ref != null) && (ref instanceof AbstractEntity) ) {
+            ((AbstractEntity) ref).setStatus(EntityStatusEnum.DELETED);
+        }
     }
 
     @Override
     public List<T> getAllActive() {
-        List<T> entities = new ArrayList<>();
-        Block<T> findedList = new Block<T>() {
-            @Override
-            public void apply(T t) {
-                entities.add(t);
-            }
-        };
-        collection.find(eq(CollectionsConst.Collections.Abstract.STATUS, EntityStatusEnum.ACTIVE.toString())).forEach(findedList);
-        return entities;
+        System.out.print(em == null);
+        return em.createQuery("Select entity FROM " + getEntityClass().getSimpleName() + " entity where entity.status = :" + EntityStatusEnum.ACTIVE).getResultList();
     }
 
     @Override
     public List<T> getAll() {
-        List<T> entities = new ArrayList<>();
-        Block<T> findedList = new Block<T>() {
-            @Override
-            public void apply(T t) {
-                entities.add(t);
-            }
-        };
-        collection.find().forEach(findedList);
-        return entities;
+        System.out.print(em == null);
+        return em == null ? Collections.EMPTY_LIST : em.createQuery("Select entity FROM " + getEntityClass().getSimpleName() + " entity").getResultList();
     }
 
     @Override
@@ -70,28 +91,18 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
         return null; //TODO реализуется только после реализации построителя запросов
     }
 
-    //TODO Переделать метод
     @Override
-    public T update(T entity, ObjectId id) {
-        collection.replaceOne(eq(CollectionsConst.Collections.Abstract.ID, id.toString()), entity);
-        return entity;
+    public T update(T entity) {
+        return em.merge(entity);
     }
 
     @Override
-    public void insert(T entity) {
-        collection.insertOne(entity);
-        //return entity; //TODO тут потом посмотреть что вернётся, возможно придётся ещё раз искать или интерфейс менять
-    }
-
-    //Ненужный метод, потом удалить
-    @Deprecated
-    @Override
-    public T getFirst() {
-        return collection.find().first();
+    public T insert(T entity) {
+        return em.merge(entity);
     }
 
     @Override
     public Long getActiveCount() {
-        return collection.count();
+        return 0L; //TODO реализуется только после реализации построителя запросов
     }
 }

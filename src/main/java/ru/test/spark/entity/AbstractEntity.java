@@ -1,7 +1,13 @@
 package ru.test.spark.entity;
 
 import org.bson.types.ObjectId;
+import ru.test.spark.consts.CollectionsConst;
 import ru.test.spark.enums.EntityStatusEnum;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.util.UUID;
 
 /**
  * Абстрактная сущность
@@ -9,23 +15,31 @@ import ru.test.spark.enums.EntityStatusEnum;
  *
  * @author nponosov
  */
+@Entity
 public abstract class AbstractEntity {
 
-    private ObjectId id;
+    @Id
+    @Column(name = CollectionsConst.Collections.Abstract.ID)
+    private UUID id;
+
+    @Column(name = CollectionsConst.Collections.Abstract.CREATE_TIME)
     private Long createTime;
+
+    @Column(name = CollectionsConst.Collections.Abstract.UPDATE_TIME)
     private Long updateTime;
+
+    @Column(name = CollectionsConst.Collections.Abstract.STATUS)
     private EntityStatusEnum status;
-    protected static String collectionName;
 
     protected AbstractEntity(){
 
     }
 
-    public ObjectId getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

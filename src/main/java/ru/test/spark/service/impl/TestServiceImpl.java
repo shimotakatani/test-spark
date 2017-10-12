@@ -1,7 +1,13 @@
-package ru.test.spark.service;
+package ru.test.spark.service.impl;
 
+import ru.test.spark.dao.interfaces.DepartmentDao;
+import ru.test.spark.dao.interfaces.UserDao;
 import ru.test.spark.entity.UserEntity;
+import ru.test.spark.service.interfaces.TestService;
 
+import javax.ejb.EJB;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 import java.util.Random;
 
 /**
@@ -9,7 +15,15 @@ import java.util.Random;
  *
  * @author nponosov
  */
-public class TestService {
+@Stateless
+@Local(TestService.class)
+public class TestServiceImpl implements TestService {
+
+    @EJB
+    private UserDao userDao;
+
+    @EJB
+    private DepartmentDao departmentDao;
 
     public UserEntity newRandomUser(){
         UserEntity newUser = new UserEntity();

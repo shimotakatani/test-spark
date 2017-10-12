@@ -4,23 +4,34 @@ import ru.test.spark.consts.CollectionsConst;
 import ru.test.spark.dto.DepartmentDto;
 import ru.test.spark.dto.UserDto;
 
+import javax.persistence.*;
+
 /**
  * Сущность Пользователь
  * create time 11.10.2017
  *
  * @author nponosov
  */
+@Entity
+@Table(name = CollectionsConst.Collections.Users.COLLECTION_NAME)
 public class UserEntity extends AbstractEntity {
 
+    @Column(name = CollectionsConst.Collections.Users.FIO)
     private String fio;
-    private String phoneNumber;
-    private String email;
-    private UserEntity cheef;
-    private DepartmentEntity department;
 
-    public UserEntity(){
-        UserEntity.collectionName = CollectionsConst.Collections.Users.COLLECTION_NAME;
-    }
+    @Column(name = CollectionsConst.Collections.Users.PHONE_NUMBER)
+    private String phoneNumber;
+
+    @Column(name = CollectionsConst.Collections.Users.EMAIL)
+    private String email;
+
+    @ManyToOne
+    @JoinColumn(name = CollectionsConst.Collections.Users.CHEEF)
+    private UserEntity cheef;
+
+    @ManyToOne
+    @JoinColumn(name = CollectionsConst.Collections.Users.DEPARTMENT)
+    private DepartmentEntity department;
 
     public String getFio() {
         return fio;

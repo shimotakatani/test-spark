@@ -12,7 +12,4 @@ import ru.test.spark.orm.DBCleint;
  */
 public class DepartmentDaoImpl extends GenericDaoImpl<DepartmentEntity> implements DepartmentDao {
 
-    public DepartmentDaoImpl(){
-        this.collection = DBCleint.getDepartmentCollection();
-    }
 }
