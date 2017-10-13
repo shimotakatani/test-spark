@@ -5,13 +5,17 @@ import ru.test.spark.dao.impl.UserDaoSessionImpl;
 import ru.test.spark.dao.interfaces.DepartmentDao;
 import ru.test.spark.dao.interfaces.UserDao;
 import ru.test.spark.dto.UserDto;
+import ru.test.spark.entity.UserEntity;
 import ru.test.spark.filters.UserFilter;
 import ru.test.spark.service.interfaces.UserService;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static ru.test.spark.utils.CommonUtils.isNotNull;
 
 /**
  * Сервис пользователей
@@ -36,12 +40,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(UUID id) {
-
+        userDao.deleteById(id);
     }
 
     @Override
     public List<UserDto> getUserDtoList(UserFilter filter) {
-        return null;
+        List<UserDto> returnUserList = new ArrayList<>();
+
+        List<UserEntity> userEntityList = userDao.getAllActive();//todo потом здесь вызвать метод с фильтром
+        userEntityList.forEach(userEntity -> {
+            UserDto userDto = new UserDto();
+            userDto.generateDtoFromEntity(userEntity);
+            returnUserList.add(userDto);
+        });
+
+        return returnUserList;
     }
 
     @Override
@@ -66,6 +79,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto insertUser(UserDto newUserDto) {
-        return null;
+        UserEntity newUserEntity = new UserEntity();
+        if (isNotNull(newUserDto)){
+            newUserDto.generateEntityFromDto(newUserEntity);
+            newUserEntity = userDao.insert(newUserEntity);
+            newUserDto.generateDtoFromEntity(newUserEntity);
+            return newUserDto;
+        }
+        return newUserDto; //todo здесь по идее должна быть сгенерирована ошибка
     }
 }

@@ -65,15 +65,26 @@ public class UserDto extends AbstractDto {
     }
 
     @Override
-    public void generateDtoFromEntity(AbstractEntity entity){
-        super.generateDtoFromEntity(entity);
-        if (isNotNull(entity) && entity instanceof UserEntity){
-            UserEntity userEntity = (UserEntity) entity;
+    public void generateDtoFromEntity(AbstractEntity sourceEntity){
+        super.generateDtoFromEntity(sourceEntity);
+        if (isNotNull(sourceEntity) && sourceEntity instanceof UserEntity){
+            UserEntity userEntity = (UserEntity) sourceEntity;
             this.setPhoneNumber(userEntity.getPhoneNumber());
             this.setFio(userEntity.getFio());
             this.setEmail(userEntity.getEmail());
 
             //TODO потом дописать вложенные сущности(как их передавать?)
+        }
+    }
+
+    @Override
+    public void generateEntityFromDto(AbstractEntity destinationEntity) {
+        super.generateEntityFromDto(destinationEntity);
+        if (isNotNull(destinationEntity) && destinationEntity instanceof UserEntity){
+            UserEntity userEntity = (UserEntity) destinationEntity;
+            if (isNotNull(this.getFio())) userEntity.setFio(this.getFio());
+            if (isNotNull(this.getEmail())) userEntity.setEmail(this.getEmail());
+            if (isNotNull(this.getPhoneNumber())) userEntity.setPhoneNumber(this.getPhoneNumber());
         }
     }
 

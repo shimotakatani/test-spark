@@ -55,12 +55,21 @@ public abstract class AbstractDto {
         this.status = status;
     }
 
-    public void generateDtoFromEntity(AbstractEntity entity){
-        if (isNotNull(entity)) {
-            this.setId(entity.getId());
-            this.setCreateTime(entity.getCreateTime());
-            this.setUpdateTime(entity.getUpdateTime());
-            this.setStatus(entity.getStatus());
+    public void generateDtoFromEntity(AbstractEntity sourceEntity){
+        if (isNotNull(sourceEntity)) {
+            this.setId(sourceEntity.getId());
+            this.setCreateTime(sourceEntity.getCreateTime());
+            this.setUpdateTime(sourceEntity.getUpdateTime());
+            this.setStatus(sourceEntity.getStatus());
+        }
+    }
+
+    public void generateEntityFromDto(AbstractEntity destinationEntity){
+        if (isNotNull(destinationEntity)){
+            if(isNotNull(this.getId())) destinationEntity.setId(this.getId());
+            if(isNotNull(this.getCreateTime())) destinationEntity.setCreateTime(this.getCreateTime());
+            if(isNotNull(this.getUpdateTime())) destinationEntity.setUpdateTime(this.getUpdateTime());
+            if(isNotNull(this.getStatus())) destinationEntity.setStatus(this.getStatus());
         }
     }
 }

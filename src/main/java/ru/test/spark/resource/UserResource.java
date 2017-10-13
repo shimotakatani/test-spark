@@ -56,9 +56,8 @@ public class UserResource {
     }
 
     private static String generateData(){
-        UserEntity newUser = testService.newRandomUser();
-        //newUser.setId(UUID.randomUUID());
-        userDao.insert(newUser);
+        UserDto newUser = testService.newRandomUserDto();
+        userService.insertUser(newUser);
 
         return newUser.toString();
     }
@@ -71,7 +70,7 @@ public class UserResource {
 
     private static String getAllUsers(){
         StringBuilder sb = new StringBuilder();
-        List<UserEntity> users = userDao.getAllActive();
+        List<UserDto> users = userService.getUserDtoList(null);
         users.forEach(user -> sb.append(user.toString()).append("\n"));
         return sb.toString();
     }

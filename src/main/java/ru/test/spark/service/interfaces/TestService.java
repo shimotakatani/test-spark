@@ -1,5 +1,6 @@
 package ru.test.spark.service.interfaces;
 
+import ru.test.spark.dto.UserDto;
 import ru.test.spark.entity.UserEntity;
 
 /**
@@ -11,5 +12,5 @@ public interface TestService {
 
     UserEntity newRandomUser();
 
-
+    UserDto newRandomUserDto();
 }
