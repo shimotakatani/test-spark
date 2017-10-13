@@ -31,9 +31,7 @@ import static spark.Spark.*;
 public class MainResource {
 
 
-    private static UserDao userDao = new UserDaoSessionImpl();
-    private static TestService testService = new TestServiceImpl();
-    private static DepartmentDao departmentDao = new DepartmentDaoImpl();
+
     public static Logger logger = Logger.getLogger(MainResource.class);
 
     public static void main(String[] args) {
@@ -43,64 +41,13 @@ public class MainResource {
 
         SparkUtils.createServerWithRequestLog(logger);
         port(4567);
-        get("/hello", (req, res) -> createHelloMassage());
-        get("/getAll", (req, res) -> getAllUsers());
-        post("/insert", (req, res) -> generateData());
-        post("/delete", (req, res) -> deleteUser());
-        post("/update", (req, res) -> updateUser());
-        post("/setChef", (req, res) -> setChef());
+
+        UserResource.publicResource();
+        DepartmentResource.publicResource();
 
     }
 
-    private static String createHelloMassage(){
 
-        UserEntity userEntity = userDao.getById(UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-7bb9bd380a16"));
-        String userPrint = userEntity == null ? "" : userEntity.toString();
-        return "Hello World! We have " + userPrint + " users!!!\n Users is " + userDao.getAll().toString();
-    }
-
-    private static String generateData(){
-        UserEntity newUser = testService.newRandomUser();
-        //newUser.setId(UUID.randomUUID());
-        userDao.insert(newUser);
-
-        return newUser.toString();
-    }
-
-    private static String deleteUser(){
-        String id = "8b1616c1-edcf-4450-aa44-19f26ef82b65";
-        userDao.deleteById(UUID.fromString(id));
-        return "Delete user by id " + id;
-    }
-
-    private static String getAllUsers(){
-        StringBuilder sb = new StringBuilder();
-        List<UserEntity> users = userDao.getAllActive();
-        users.forEach(user -> sb.append(user.toString()).append("\n"));
-        return sb.toString();
-    }
-
-    private static String updateUser(){
-        List<UserEntity> users = userDao.getAllActive();
-        Calendar cal = Calendar.getInstance();
-        users.get(0).setCreateTime(cal.getTimeInMillis());
-        UserEntity user = userDao.update(users.get(0));
-        return "Update user with id = " + user.getId().toString() + " at " + user.getCreateTime();
-    }
-
-    private static String setChef(){
-        List<UserEntity> users = userDao.getAllActive();
-        List<DepartmentEntity> departments = departmentDao.getAllActive();
-        Calendar cal = Calendar.getInstance();
-        Long currentTime = cal.getTimeInMillis();
-        users.get(0).setUpdateTime(currentTime);
-        users.get(1).setUpdateTime(currentTime);
-        users.get(0).setCheef(users.get(1));
-        users.get(0).setDepartment(departments.get(0));
-        UserEntity user = userDao.update(users.get(0));
-        userDao.update(users.get(1));
-        return "Update user with id = " + user.getId().toString() + " at " + user.getCreateTime();
-    }
 
 
 }

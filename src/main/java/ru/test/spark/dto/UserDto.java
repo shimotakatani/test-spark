@@ -1,5 +1,11 @@
 package ru.test.spark.dto;
 
+import ru.test.spark.entity.AbstractEntity;
+import ru.test.spark.entity.UserEntity;
+import ru.test.spark.utils.CommonUtils;
+
+import static ru.test.spark.utils.CommonUtils.isNotNull;
+
 /**
  * Dto для сущности пользователя
  * create time 11.10.2017
@@ -56,5 +62,34 @@ public class UserDto extends AbstractDto {
 
     public void setDepartment(DepartmentDto department) {
         this.department = department;
+    }
+
+    @Override
+    public void generateDtoFromEntity(AbstractEntity entity){
+        super.generateDtoFromEntity(entity);
+        if (isNotNull(entity) && entity instanceof UserEntity){
+            UserEntity userEntity = (UserEntity) entity;
+            this.setPhoneNumber(userEntity.getPhoneNumber());
+            this.setFio(userEntity.getFio());
+            this.setEmail(userEntity.getEmail());
+
+            //TODO потом дописать вложенные сущности(как их передавать?)
+        }
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{ id:").append(this.getId());
+        if (CommonUtils.isNotNull(this.getCreateTime()))  sb.append(", createTime:").append(this.getCreateTime());
+        if (CommonUtils.isNotNull(this.getUpdateTime()))  sb.append(", updateTime").append(this.getUpdateTime());
+        if (CommonUtils.isNotNull(this.getStatus()))  sb.append(", status:").append(this.getStatus().toString());
+        if (CommonUtils.isNotNull(this.getFio()))    sb.append(", fio:").append(this.getFio());
+        if (CommonUtils.isNotNull(this.getPhoneNumber()))    sb.append(", phoneNumber:").append(this.getPhoneNumber());
+        if (CommonUtils.isNotNull(this.getEmail()))    sb.append(", email:").append(this.getEmail());
+        sb.append("}");
+
+        return sb.toString();
     }
 }

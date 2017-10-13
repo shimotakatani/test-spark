@@ -22,9 +22,9 @@ import static ru.test.spark.utils.CommonUtils.isNotNull;
  *
  * @author nponosov
  */
-public class DBCleint {
+public class MongoDBCleint {
 
-    private DBCleint(){}
+    private MongoDBCleint(){}
 
     private static CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
             fromProviders(PojoCodecProvider.builder().automatic(true).build()));

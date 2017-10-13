@@ -5,10 +5,7 @@ import ru.test.spark.dao.interfaces.UserDao;
 import ru.test.spark.entity.UserEntity;
 import ru.test.spark.enums.EntityStatusEnum;
 import ru.test.spark.filters.AbstractFilter;
-import ru.test.spark.orm.DBCleint;
-import ru.test.spark.orm.PostgreClient;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

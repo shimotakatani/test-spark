@@ -1,7 +1,12 @@
 package ru.test.spark.dto;
 
 import org.bson.types.ObjectId;
+import ru.test.spark.entity.AbstractEntity;
 import ru.test.spark.enums.EntityStatusEnum;
+
+import java.util.UUID;
+
+import static ru.test.spark.utils.CommonUtils.isNotNull;
 
 /**
  * Абстрактное DTO
@@ -10,8 +15,7 @@ import ru.test.spark.enums.EntityStatusEnum;
  * @author nponosov
  */
 public abstract class AbstractDto {
-    private Long id;
-    private ObjectId objectId;
+    private UUID id;
     private Long createTime;
     private Long updateTime;
     private EntityStatusEnum status;
@@ -19,20 +23,12 @@ public abstract class AbstractDto {
 
     protected AbstractDto(){}
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
-    }
-
-    public ObjectId getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
     }
 
     public Long getCreateTime() {
@@ -57,5 +53,14 @@ public abstract class AbstractDto {
 
     public void setStatus(EntityStatusEnum status) {
         this.status = status;
+    }
+
+    public void generateDtoFromEntity(AbstractEntity entity){
+        if (isNotNull(entity)) {
+            this.setId(entity.getId());
+            this.setCreateTime(entity.getCreateTime());
+            this.setUpdateTime(entity.getUpdateTime());
+            this.setStatus(entity.getStatus());
+        }
     }
 }

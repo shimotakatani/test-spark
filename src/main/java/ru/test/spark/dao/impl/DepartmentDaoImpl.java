@@ -2,7 +2,6 @@ package ru.test.spark.dao.impl;
 
 import ru.test.spark.dao.interfaces.DepartmentDao;
 import ru.test.spark.entity.DepartmentEntity;
-import ru.test.spark.orm.DBCleint;
 
 /**
  * DAO для сущности Отдел
