@@ -25,13 +25,13 @@ public class UserEntity extends AbstractEntity {
     @Column(name = CollectionsConst.Collections.Users.EMAIL)
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = CollectionsConst.Collections.Users.CHEEF)
-    private UserEntity cheef;
-
-    @ManyToOne
-    @JoinColumn(name = CollectionsConst.Collections.Users.DEPARTMENT)
-    private DepartmentEntity department;
+//    @ManyToOne
+//    @JoinColumn(name = CollectionsConst.Collections.Users.CHEEF)
+//    private UserEntity cheef;
+//
+//    @ManyToOne
+//    @JoinColumn(name = CollectionsConst.Collections.Users.DEPARTMENT)
+//    private DepartmentEntity department;
 
     public String getFio() {
         return fio;
@@ -57,21 +57,21 @@ public class UserEntity extends AbstractEntity {
         this.email = email;
     }
 
-    public UserEntity getCheef() {
-        return cheef;
-    }
-
-    public void setCheef(UserEntity cheef) {
-        this.cheef = cheef;
-    }
-
-    public DepartmentEntity getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentEntity department) {
-        this.department = department;
-    }
+//    public UserEntity getCheef() {
+//        return cheef;
+//    }
+//
+//    public void setCheef(UserEntity cheef) {
+//        this.cheef = cheef;
+//    }
+//
+//    public DepartmentEntity getDepartment() {
+//        return department;
+//    }
+//
+//    public void setDepartment(DepartmentEntity department) {
+//        this.department = department;
+//    }
 
 //    @Override
 //    public String toString(){

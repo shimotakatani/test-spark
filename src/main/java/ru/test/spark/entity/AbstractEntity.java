@@ -1,6 +1,7 @@
 package ru.test.spark.entity;
 
 import org.eclipse.persistence.annotations.Converter;
+import org.hibernate.annotations.Type;
 import ru.test.spark.consts.CollectionsConst;
 import ru.test.spark.enums.EntityStatusEnum;
 

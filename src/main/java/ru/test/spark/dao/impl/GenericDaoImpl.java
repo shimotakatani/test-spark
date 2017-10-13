@@ -1,12 +1,14 @@
 package ru.test.spark.dao.impl;
 
 
+import org.hibernate.Session;
 import ru.test.spark.dao.interfaces.GenericDao;
 import ru.test.spark.em.LocalEntityMangerFactory;
 import ru.test.spark.entity.AbstractEntity;
 import ru.test.spark.enums.EntityStatusEnum;
 import ru.test.spark.filters.AbstractFilter;
 import ru.test.spark.orm.PostgreClient;
+import ru.test.spark.utils.HibernateUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -103,7 +105,13 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
     @Override
     public T insert(T entity) {
-        return em.merge(entity);
+        Session session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        session.save(entity);
+        session.getTransaction().commit();
+//        T entityOut = em.merge(entity);
+//        em.flush();
+        return entity;
     }
 
     @Override

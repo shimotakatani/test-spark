@@ -55,7 +55,7 @@ public class MainResource {
 
     private static String generateData(){
         UserEntity newUser = testService.newRandomUser();
-        newUser.setId(UUID.randomUUID());
+        //newUser.setId(UUID.randomUUID());
         userDao.insert(newUser);
 
         return newUser.toString();

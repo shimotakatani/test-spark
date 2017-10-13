@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.archive.autodetection" >class</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.driver_class" >org.postgresql.Driver</property>
+        <property name="hibernate.connection.url"  >jdbc:postgresql://localhost:5432/test</property>
+        <property name="hibernate.connection.username" >test</property>
+        <property name="hibernate.connection.password" >test</property>
+        <property name="hibernate.show_sql" >true</property>
+        <property name="hibernate.flushMode" >FLUSH_AUTO</property>
+        <!--<property name="hibernate.hbm2ddl.auto" >validate</property>-->
+
+        <!-- JDBC connection pool (use the built-in) -->
+        <property name="connection.pool_size">1</property>
+
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+
+        <mapping class="ru.test.spark.entity.UserEntity"/>
+        <mapping class="ru.test.spark.entity.DepartmentEntity"/>
+
+    </session-factory>
+</hibernate-configuration>
