@@ -8,9 +8,12 @@ package ru.test.spark.resource;
  */
 
 import org.apache.log4j.BasicConfigurator;
+import ru.test.spark.dao.impl.DepartmentDaoImpl;
 import ru.test.spark.dao.impl.UserDaoImpl;
 import ru.test.spark.dao.impl.UserDaoSessionImpl;
+import ru.test.spark.dao.interfaces.DepartmentDao;
 import ru.test.spark.dao.interfaces.UserDao;
+import ru.test.spark.entity.DepartmentEntity;
 import ru.test.spark.entity.UserEntity;
 import ru.test.spark.logger.SparkUtils;
 import ru.test.spark.service.impl.TestServiceImpl;
@@ -30,6 +33,7 @@ public class MainResource {
 
     private static UserDao userDao = new UserDaoSessionImpl();
     private static TestService testService = new TestServiceImpl();
+    private static DepartmentDao departmentDao = new DepartmentDaoImpl();
     public static Logger logger = Logger.getLogger(MainResource.class);
 
     public static void main(String[] args) {
@@ -44,6 +48,7 @@ public class MainResource {
         post("/insert", (req, res) -> generateData());
         post("/delete", (req, res) -> deleteUser());
         post("/update", (req, res) -> updateUser());
+        post("/setChef", (req, res) -> setChef());
 
     }
 
@@ -80,6 +85,20 @@ public class MainResource {
         Calendar cal = Calendar.getInstance();
         users.get(0).setCreateTime(cal.getTimeInMillis());
         UserEntity user = userDao.update(users.get(0));
+        return "Update user with id = " + user.getId().toString() + " at " + user.getCreateTime();
+    }
+
+    private static String setChef(){
+        List<UserEntity> users = userDao.getAllActive();
+        List<DepartmentEntity> departments = departmentDao.getAllActive();
+        Calendar cal = Calendar.getInstance();
+        Long currentTime = cal.getTimeInMillis();
+        users.get(0).setUpdateTime(currentTime);
+        users.get(1).setUpdateTime(currentTime);
+        users.get(0).setCheef(users.get(1));
+        users.get(0).setDepartment(departments.get(0));
+        UserEntity user = userDao.update(users.get(0));
+        userDao.update(users.get(1));
         return "Update user with id = " + user.getId().toString() + " at " + user.getCreateTime();
     }
 
