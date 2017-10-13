@@ -1,18 +1,16 @@
 package ru.test.spark.dao.impl;
 
-import com.mongodb.Block;
-import com.mongodb.client.MongoCollection;
-import org.bson.Document;
-import org.bson.types.ObjectId;
-import org.eclipse.jetty.util.log.Log;
-import ru.test.spark.consts.CollectionsConst;
+
 import ru.test.spark.dao.interfaces.GenericDao;
+import ru.test.spark.em.LocalEntityMangerFactory;
 import ru.test.spark.entity.AbstractEntity;
 import ru.test.spark.enums.EntityStatusEnum;
 import ru.test.spark.filters.AbstractFilter;
 import ru.test.spark.orm.PostgreClient;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
 
 import static com.mongodb.client.model.Filters.*;
@@ -36,8 +34,15 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
     //Коллекция с которой работает DAO
     protected Connection connection = PostgreClient.getPostgresConnection();
 
-    @PersistenceUnit(name = "test")
-    EntityManager em;
+
+    protected EntityManager em;
+
+    protected GenericDaoImpl(){
+        //LocalEntityMangerFactory factory = new LocalEntityMangerFactory();
+        //EntityManagerFactory entityManagerFactory = factory.entityManagerFactory(factory.dataSource(), factory.hibernateProperties());
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("test");
+        this.em = entityManagerFactory.createEntityManager();
+    }
 
     private Class<T> entityClass;
 

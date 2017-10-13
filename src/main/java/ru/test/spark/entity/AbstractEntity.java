@@ -1,12 +1,10 @@
 package ru.test.spark.entity;
 
-import org.bson.types.ObjectId;
+import org.eclipse.persistence.annotations.Converter;
 import ru.test.spark.consts.CollectionsConst;
 import ru.test.spark.enums.EntityStatusEnum;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 /**
@@ -15,10 +13,11 @@ import java.util.UUID;
  *
  * @author nponosov
  */
-@Entity
+@MappedSuperclass
 public abstract class AbstractEntity {
 
     @Id
+    @GeneratedValue
     @Column(name = CollectionsConst.Collections.Abstract.ID)
     private UUID id;
 
@@ -28,6 +27,7 @@ public abstract class AbstractEntity {
     @Column(name = CollectionsConst.Collections.Abstract.UPDATE_TIME)
     private Long updateTime;
 
+    @Convert(converter = EntityStatusEnum.EntityStatusEnumConverter.class)
     @Column(name = CollectionsConst.Collections.Abstract.STATUS)
     private EntityStatusEnum status;
 

@@ -23,7 +23,7 @@ public final class CollectionsConst {
         }
 
         public static final class Department{
-            public static final String COLLECTION_NAME = "departments";
+            public static final String COLLECTION_NAME = "department";
             public static final String NAME = "name";
         }
 

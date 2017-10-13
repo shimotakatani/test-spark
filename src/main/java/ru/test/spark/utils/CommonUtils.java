@@ -11,4 +11,8 @@ public class CommonUtils {
     public static boolean isNotNull(Object obj){
         return obj != null;
     }
+
+    public static boolean isNotNullOrEmpty(String s){
+        return s != null && s.length() > 0;
+    }
 }

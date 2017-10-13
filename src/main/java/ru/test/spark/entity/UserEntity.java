@@ -72,4 +72,16 @@ public class UserEntity extends AbstractEntity {
     public void setDepartment(DepartmentEntity department) {
         this.department = department;
     }
+
+//    @Override
+//    public String toString(){
+//        StringBuilder sb = new StringBuilder();
+//
+//        sb.append("{ id:").append(this.getId()).append(", createTime:").append(this.getCreateTime()).append(", updateTime")
+//                .append(this.getUpdateTime()).append(", status:").append(this.getStatus().toString()).append(", fio:")
+//                .append(this.getFio()).append(", phoneNumber:").append(this.getPhoneNumber()).append(", email:")
+//                .append(this.getEmail()).append("}");
+//
+//        return sb.toString();
+//    }
 }

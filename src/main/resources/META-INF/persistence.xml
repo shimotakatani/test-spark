@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+    <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <properties>
+            <!--<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/test"/>-->
+            <!--<property name="javax.persistence.jdbc.password" value="test"/>-->
+            <!--<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>-->
+            <!--<property name="javax.persistence.jdbc.user" value="test"/>-->
+            <!--<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>-->
+            <property name="hibernate.archive.autodetection" value="class" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/test" />
+            <property name="hibernate.connection.username" value="test" />
+            <property name="hibernate.connection.password" value="test" />
+            <!-- <property name="hibernate.show_sql" value="true"/> -->
+            <property name="hibernate.flushMode" value="FLUSH_AUTO" />
+            <property name="hibernate.hbm2ddl.auto" value="validate" />
+        </properties>
+    </persistence-unit>
+</persistence>

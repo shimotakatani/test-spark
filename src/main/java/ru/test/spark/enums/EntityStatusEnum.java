@@ -1,5 +1,8 @@
 package ru.test.spark.enums;
 
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
+
 /**
  * Перечисление для статуса сущности
  * create time 11.10.2017
@@ -17,5 +20,22 @@ public enum EntityStatusEnum {
     EntityStatusEnum(Integer id, String name){
         this.id = id;
         this.name = name;
+    }
+
+
+
+    @Converter
+    public static class EntityStatusEnumConverter implements AttributeConverter<EntityStatusEnum, String> {
+
+        @Override
+        public String convertToDatabaseColumn(EntityStatusEnum entityStatusEnum) {
+            return entityStatusEnum == null ? null : entityStatusEnum.toString();
+        }
+
+        @Override
+        public EntityStatusEnum convertToEntityAttribute(String caption) {
+
+            return EntityStatusEnum.valueOf(caption);
+        }
     }
 }
