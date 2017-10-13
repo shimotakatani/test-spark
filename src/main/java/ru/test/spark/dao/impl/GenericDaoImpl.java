@@ -10,10 +10,7 @@ import ru.test.spark.filters.AbstractFilter;
 import ru.test.spark.orm.PostgreClient;
 import ru.test.spark.utils.HibernateUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.*;
 
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
@@ -39,11 +36,14 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
     protected EntityManager em;
 
+    Session session;
+
     protected GenericDaoImpl(){
         //LocalEntityMangerFactory factory = new LocalEntityMangerFactory();
         //EntityManagerFactory entityManagerFactory = factory.entityManagerFactory(factory.dataSource(), factory.hibernateProperties());
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("test");
         this.em = entityManagerFactory.createEntityManager();
+        //this.session = HibernateUtils.getSessionFactory().getCurrentSession();
     }
 
     private Class<T> entityClass;
@@ -64,33 +64,47 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
     @Override
     public T getById(UUID id) {
 
-        Object o = em.find(getEntityClass(), id);
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        Object o = session.find(getEntityClass(), id);
+        session.getTransaction().commit();
         return o != null ? (T) o : null;
     }
 
     @Override
     public void deleteById(UUID id) {
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
         Object ref = null;
         try {
-            ref = em.getReference(getEntityClass(), id);
+            ref = session.getReference(getEntityClass(), id);
         } catch (Exception e) {
             System.out.println("Сущность с id = :id не найдена для удаления".replace(":id", id.toString()));
         }
         if ( (ref != null) && (ref instanceof AbstractEntity) ) {
             ((AbstractEntity) ref).setStatus(EntityStatusEnum.DELETED);
         }
+        session.getTransaction().commit();
     }
 
     @Override
     public List<T> getAllActive() {
-        System.out.print(em == null);
-        return em.createQuery("Select entity FROM " + getEntityClass().getSimpleName() + " entity where entity.status = :" + EntityStatusEnum.ACTIVE).getResultList();
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        Query getQuery = session.createQuery("Select entity FROM " + getEntityClass().getSimpleName() + " entity where entity.status = :status");
+        getQuery.setParameter("status", EntityStatusEnum.ACTIVE);
+        List<T> entityList = getQuery.getResultList();
+        session.getTransaction().commit();
+        return entityList;
     }
 
     @Override
     public List<T> getAll() {
-        System.out.print(em == null);
-        return em == null ? Collections.EMPTY_LIST : em.createQuery("Select entity FROM " + getEntityClass().getSimpleName() + " entity").getResultList();
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        List<T> entityList = session.createQuery("Select entity FROM " + getEntityClass().getSimpleName() + " entity").getResultList();
+        session.getTransaction().commit();
+        return entityList;
     }
 
     @Override
@@ -99,18 +113,20 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
     }
 
     @Override
-    public T update(T entity) {
-        return em.merge(entity);
+    public T update(T entity){
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        session.merge(entity);
+        session.getTransaction().commit();
+        return entity;
     }
 
     @Override
     public T insert(T entity) {
-        Session session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        session.save(entity);
+        session.merge(entity);
         session.getTransaction().commit();
-//        T entityOut = em.merge(entity);
-//        em.flush();
         return entity;
     }
 

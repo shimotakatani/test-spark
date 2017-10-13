@@ -9,6 +9,7 @@ package ru.test.spark.resource;
 
 import org.apache.log4j.BasicConfigurator;
 import ru.test.spark.dao.impl.UserDaoImpl;
+import ru.test.spark.dao.impl.UserDaoSessionImpl;
 import ru.test.spark.dao.interfaces.UserDao;
 import ru.test.spark.entity.UserEntity;
 import ru.test.spark.logger.SparkUtils;
@@ -27,7 +28,7 @@ import static spark.Spark.*;
 public class MainResource {
 
 
-    private static UserDao userDao = new UserDaoImpl();
+    private static UserDao userDao = new UserDaoSessionImpl();
     private static TestService testService = new TestServiceImpl();
     public static Logger logger = Logger.getLogger(MainResource.class);
 
@@ -62,7 +63,7 @@ public class MainResource {
     }
 
     private static String deleteUser(){
-        String id = "a0eebc99-ac0b-4ef8-bb6d-7bb9bd380a16";
+        String id = "8b1616c1-edcf-4450-aa44-19f26ef82b65";
         userDao.deleteById(UUID.fromString(id));
         return "Delete user by id " + id;
     }

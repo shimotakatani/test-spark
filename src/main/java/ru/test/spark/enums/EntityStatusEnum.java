@@ -1,5 +1,7 @@
 package ru.test.spark.enums;
 
+import ru.test.spark.utils.CommonUtils;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
@@ -35,7 +37,7 @@ public enum EntityStatusEnum {
         @Override
         public EntityStatusEnum convertToEntityAttribute(String caption) {
 
-            return EntityStatusEnum.valueOf(caption);
+            return CommonUtils.isNotNullOrEmpty(caption) ? EntityStatusEnum.valueOf(caption) : EntityStatusEnum.ACTIVE;
         }
     }
 }
