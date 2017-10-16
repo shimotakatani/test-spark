@@ -5,6 +5,7 @@ import ru.test.spark.dao.interfaces.UserDao;
 import ru.test.spark.entity.UserEntity;
 import ru.test.spark.enums.EntityStatusEnum;
 import ru.test.spark.filters.AbstractFilter;
+import ru.test.spark.filters.UserFilter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -141,7 +142,7 @@ public class UserDaoImpl extends GenericDaoImpl<UserEntity> implements UserDao {
 
     //TODO отложить до реализации построителя запросов
     @Override
-    public List<UserEntity> getAllActive(AbstractFilter filter) {
+    public List<UserEntity> getAllActive(UserFilter filter) {
         return super.getAllActive(filter);
     }
 

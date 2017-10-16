@@ -2,6 +2,11 @@ package ru.test.spark.filters;
 
 import ru.test.spark.enums.EntityStatusEnum;
 
+import javax.persistence.Query;
+import java.util.UUID;
+
+import static ru.test.spark.utils.CommonUtils.isNotNull;
+
 /**
  * Абстрактный фильтр для запросов
  * create time 11.10.2017
@@ -10,16 +15,47 @@ import ru.test.spark.enums.EntityStatusEnum;
  */
 public class AbstractFilter {
 
+    protected String entityName;
+
     private Long limit;
     private Long page;
     private Long start;
     private Long countOnPage;
-    private Long id;
+    private UUID id;
     private Long updateTime;
     private Long createTime;
     private EntityStatusEnum status;
 
     protected AbstractFilter(){
+
+    }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    protected void setEntityName(String entityName) {
+        this.entityName = entityName;
+    }
+
+    public String getWhereLimitOrderString(){
+        return ""; //todo пока не понятно, какую часть построител запроса можно будет сюда достать, возможно придётся разделить метод
+    }
+
+    public void normalizeLimits(){
+        if ( ! isNotNull(this.getLimit())){ this.setLimit(100L); }
+        if ( ! isNotNull(this.getPage())){ this.setPage(1L); }
+        if ( ! isNotNull(this.getStart())){ this.setStart(0L); }
+    }
+
+    public void setLimitOption(Query query){
+
+        if (isNotNull(this.getLimit())){
+            query.setMaxResults( this.getLimit().intValue());
+        }
+        if (isNotNull(this.getStart())){
+            query.setFirstResult(this.getStart().intValue());
+        }
 
     }
 
@@ -55,11 +91,11 @@ public class AbstractFilter {
         this.countOnPage = countOnPage;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

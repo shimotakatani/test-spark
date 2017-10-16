@@ -1,14 +1,18 @@
 package ru.test.spark.resource;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import ru.test.spark.consts.CollectionsConst;
+import ru.test.spark.consts.MessageConst;
 import ru.test.spark.dao.impl.DepartmentDaoImpl;
 import ru.test.spark.dao.impl.UserDaoSessionImpl;
 import ru.test.spark.dao.interfaces.DepartmentDao;
 import ru.test.spark.dao.interfaces.UserDao;
+import ru.test.spark.dto.ListDto;
 import ru.test.spark.dto.UserDto;
 import ru.test.spark.entity.DepartmentEntity;
 import ru.test.spark.entity.UserEntity;
+import ru.test.spark.filters.UserFilter;
 import ru.test.spark.service.impl.DepartmentServiceImpl;
 import ru.test.spark.service.impl.TestServiceImpl;
 import ru.test.spark.service.impl.UserServiceImpl;
@@ -16,10 +20,14 @@ import ru.test.spark.service.interfaces.DepartmentService;
 import ru.test.spark.service.interfaces.TestService;
 import ru.test.spark.service.interfaces.UserService;
 
-import javax.ejb.EJB;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ru.test.spark.utils.JsonUtils;
 
 import static spark.Spark.*;
 
@@ -36,23 +44,16 @@ public class UserResource {
     private static DepartmentDao departmentDao = new DepartmentDaoImpl();
     private static UserService userService = new UserServiceImpl();
     private static DepartmentService departmentService = new DepartmentServiceImpl();
+    private static ObjectMapper mapper = new ObjectMapper();
 
     public static void publicResource(){
-        //get(CollectionsConst.Collections.Users.COLLECTION_NAME + "/hello", (req, res) -> createHelloMassage());
         get("/" + CollectionsConst.Collections.Users.COLLECTION_NAME + "/getAll", (req, res) -> getAllUsers());
-        get("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/getById", (req, res) -> getUser());
-        get("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/filter", (req, res) -> getAllUsers());
+        get("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/getById", (req, res) -> getUser(req.queryParams("id")));
+        get("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/filter", (req, res) -> getFilteredUsers(req.queryParams("user")));
         post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/insert", (req, res) -> generateData());
         post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/delete", (req, res) -> deleteUser());
         post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/edit", (req, res) -> updateUser());
         post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/setChef", (req, res) -> setChef());
-    }
-
-    private static String createHelloMassage(){
-
-        UserEntity userEntity = userDao.getById(UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-7bb9bd380a16"));
-        String userPrint = userEntity == null ? "" : userEntity.toString();
-        return "Hello World! We have " + userPrint + " users!!!\n Users is " + userDao.getAll().toString();
     }
 
     private static String generateData(){
@@ -75,8 +76,39 @@ public class UserResource {
         return sb.toString();
     }
 
-    private static String getUser(){
-        return userService.getUserById(UUID.fromString("bdffdc1a-583e-4b3f-94a0-227e3bb50a7f")).toString();
+    private static String getFilteredUsers(String filterString){
+
+        UserFilter filter = null;
+        try {
+            filter = mapper.readValue(filterString, UserFilter.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return MessageConst.ErrorMessage.errorRequestParam;
+        }
+        filter.normalizeLimits();
+        filter.setFio("FIO-2-2-9-9-11-3245");
+        filter.setCreateTime(1507906534037L);
+
+        ListDto resultDto = new ListDto();
+
+        StringBuilder sb = new StringBuilder();
+        List<UserDto> users = userService.getUserDtoList(filter);
+        resultDto.setData(users);
+        resultDto.setLimit(filter.getLimit());
+        resultDto.setPage(filter.getPage());
+        resultDto.setStart(filter.getStart());
+
+        String resultString = null;
+        try {
+            resultString = mapper.writeValueAsString(resultDto);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return resultString;
+    }
+
+    private static String getUser(String id){
+        return userService.getUserById(UUID.fromString(id)).toString();
     }
 
     private static String updateUser(){

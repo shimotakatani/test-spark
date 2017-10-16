@@ -3,22 +3,17 @@ package ru.test.spark.dao.impl;
 
 import org.hibernate.Session;
 import ru.test.spark.dao.interfaces.GenericDao;
-import ru.test.spark.em.LocalEntityMangerFactory;
 import ru.test.spark.entity.AbstractEntity;
 import ru.test.spark.enums.EntityStatusEnum;
 import ru.test.spark.filters.AbstractFilter;
 import ru.test.spark.orm.PostgreClient;
+import ru.test.spark.utils.CommonUtils;
 import ru.test.spark.utils.HibernateUtils;
 
 import javax.persistence.*;
 
-import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Updates.*;
-
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,7 +43,7 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
     private Class<T> entityClass;
 
-    private Class<T> getEntityClass() {
+    protected Class<T> getEntityClass() {
         if (entityClass == null) {
             ParameterizedType genericSuperClass;
             if (getClass().getGenericSuperclass() instanceof ParameterizedType) {
@@ -109,7 +104,13 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
     @Override
     public List<T> getAllActive(AbstractFilter filter) {
-        return null; //TODO реализуется только после реализации построителя запросов
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        Query getQuery = session.createQuery("Select entity FROM " + getEntityClass().getSimpleName() + " entity where entity.status = :status ");
+        getQuery.setParameter("status", EntityStatusEnum.ACTIVE);
+        List<T> entityList = getQuery.getResultList();
+        session.getTransaction().commit();
+        return entityList;
     }
 
     @Override
@@ -132,6 +133,19 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
     @Override
     public Long getActiveCount() {
-        return 0L; //TODO реализуется только после реализации построителя запросов
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        List<Long> entityList = session.createQuery("Select count(entity) FROM " + getEntityClass().getSimpleName() + " entity").getResultList();
+        session.getTransaction().commit();
+        return CommonUtils.isNotNullOrEmpty(entityList) ? entityList.get(0) : 0L;
+    }
+
+    @Override
+    public Long getActiveCount(AbstractFilter filter) {
+        session = HibernateUtils.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        List<Long> entityList = session.createQuery("Select count(entity) FROM " + getEntityClass().getSimpleName() + " entity where entity.status = :status").getResultList();
+        session.getTransaction().commit();
+        return CommonUtils.isNotNullOrEmpty(entityList) ? entityList.get(0) : 0L;
     }
 }

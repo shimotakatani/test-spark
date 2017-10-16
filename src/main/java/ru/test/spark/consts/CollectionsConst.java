@@ -34,4 +34,27 @@ public final class CollectionsConst {
             public static final String STATUS = "status";
         }
     }
+
+    public static final class Entity{
+        public static final class Users{
+            public static final String ENTITY_NAME = "UserEntity";
+            public static final String FIO = "fio";
+            public static final String PHONE_NUMBER = "phoneNumber";
+            public static final String EMAIL = "email";
+            public static final String CHEEF = "cheef";
+            public static final String DEPARTMENT = "department";
+        }
+
+        public static final class Department{
+            public static final String ENTITY_NAME = "DepartmentEntity";
+            public static final String NAME = "name";
+        }
+
+        public static final class Abstract{
+            public static final String ID = "id";
+            public static final String CREATE_TIME = "createTime";
+            public static final String UPDATE_TIME = "updateTime";
+            public static final String STATUS = "status";
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package ru.test.spark.utils;
 
+import java.util.Collection;
+
 /**
  * create time 11.10.2017
  *
@@ -14,5 +16,9 @@ public class CommonUtils {
 
     public static boolean isNotNullOrEmpty(String s){
         return s != null && s.length() > 0;
+    }
+
+    public static boolean isNotNullOrEmpty(Collection s){
+        return s != null && s.size() > 0;
     }
 }

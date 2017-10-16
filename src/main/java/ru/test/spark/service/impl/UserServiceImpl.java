@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static ru.test.spark.utils.CommonUtils.isNotNull;
+import static ru.test.spark.utils.CommonUtils.isNotNullOrEmpty;
 
 /**
  * Сервис пользователей
@@ -45,22 +46,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getUserDtoList(UserFilter filter) {
-        List<UserDto> returnUserList = new ArrayList<>();
-
-        List<UserEntity> userEntityList = userDao.getAllActive();//todo потом здесь вызвать метод с фильтром
-        userEntityList.forEach(userEntity -> {
-            UserDto userDto = new UserDto();
-            userDto.generateDtoFromEntity(userEntity);
-            returnUserList.add(userDto);
-        });
-
-        return returnUserList;
+        return convertEntitiesToDtos(userDao.getAllActive(filter));
     }
 
     @Override
-    public List<UserDto> getUserDtoList() {
-        return null;
-    }
+    public List<UserDto> getUserDtoList(){ return convertEntitiesToDtos(userDao.getAllActive()); }
 
     @Override
     public Long getUserDtoListCount(UserFilter filter) {
@@ -87,5 +77,19 @@ public class UserServiceImpl implements UserService {
             return newUserDto;
         }
         return newUserDto; //todo здесь по идее должна быть сгенерирована ошибка
+    }
+
+    private List<UserDto> convertEntitiesToDtos(List<UserEntity> entityList){
+        List<UserDto> returnUserList = new ArrayList<>();
+
+        if (isNotNullOrEmpty(entityList)) {
+            entityList.forEach(userEntity -> {
+                UserDto userDto = new UserDto();
+                userDto.generateDtoFromEntity(userEntity);
+                returnUserList.add(userDto);
+            });
+        }
+
+        return returnUserList;
     }
 }

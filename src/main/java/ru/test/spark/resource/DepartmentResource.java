@@ -37,12 +37,12 @@ public class DepartmentResource {
 
     public static void publicResource(){
 
-        get("/" + CollectionsConst.Collections.Department.COLLECTION_NAME + "/getAll", (req, res) -> getAllUsers());
-        get("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/getById", (req, res) -> getAllUsers());
-        get("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/filter", (req, res) -> getAllUsers());
+        get("/" + CollectionsConst.Collections.Department.COLLECTION_NAME + "/getAll", (req, res) -> getAllDepartments());
+        get("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/getById", (req, res) -> getAllDepartments());
+        get("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/filter", (req, res) -> getAllDepartments());
         post("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/insert", (req, res) -> generateData());
-        post("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/delete", (req, res) -> deleteUser());
-        post("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/edit", (req, res) -> updateUser());
+        post("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/delete", (req, res) -> deleteDepartment());
+        post("/" +CollectionsConst.Collections.Department.COLLECTION_NAME + "/edit", (req, res) -> updateDepartment());
 
     }
 
@@ -55,20 +55,20 @@ public class DepartmentResource {
         return newUser.toString();
     }
 
-    private static String deleteUser(){
+    private static String deleteDepartment(){
         String id = "8b1616c1-edcf-4450-aa44-19f26ef82b65";
         userDao.deleteById(UUID.fromString(id));
         return "Delete user by id " + id;
     }
 
-    private static String getAllUsers(){
+    private static String getAllDepartments(){
         StringBuilder sb = new StringBuilder();
         List<UserEntity> users = userDao.getAllActive();
         users.forEach(user -> sb.append(user.toString()).append("\n"));
         return sb.toString();
     }
 
-    private static String updateUser(){
+    private static String updateDepartment(){
         List<UserEntity> users = userDao.getAllActive();
         Calendar cal = Calendar.getInstance();
         users.get(0).setCreateTime(cal.getTimeInMillis());
@@ -76,17 +76,4 @@ public class DepartmentResource {
         return "Update user with id = " + user.getId().toString() + " at " + user.getCreateTime();
     }
 
-    private static String setChef(){
-        List<UserEntity> users = userDao.getAllActive();
-        List<DepartmentEntity> departments = departmentDao.getAllActive();
-        Calendar cal = Calendar.getInstance();
-        Long currentTime = cal.getTimeInMillis();
-        users.get(0).setUpdateTime(currentTime);
-        users.get(1).setUpdateTime(currentTime);
-        users.get(0).setCheef(users.get(1));
-        users.get(0).setDepartment(departments.get(0));
-        UserEntity user = userDao.update(users.get(0));
-        userDao.update(users.get(1));
-        return "Update user with id = " + user.getId().toString() + " at " + user.getCreateTime();
-    }
 }

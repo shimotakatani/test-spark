@@ -73,4 +73,12 @@ public interface GenericDao<T> {
      */
     Long getActiveCount();
 
+    /**
+     * Получить количество активных записей
+     * @param filter - фильтр как и у основного запроса
+     * @return количество активных записей
+     * @author nponosov
+     */
+    Long getActiveCount(AbstractFilter filter);
+
 }
