@@ -117,7 +117,8 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
     public T update(T entity){
         session = HibernateUtils.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        entity = (T)session.merge(entity);
+        //entity = (T)
+        session.saveOrUpdate(entity);
         session.getTransaction().commit();
         return entity;
     }

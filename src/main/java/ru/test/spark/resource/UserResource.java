@@ -129,7 +129,13 @@ public class UserResource {
     }
 
     private static String getUser(String id){
-        return userService.getUserById(UUID.fromString(id)).toString();
+        String resultString = null;
+        try {
+            resultString = mapper.writeValueAsString(userService.getUserById(UUID.fromString(id)));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return resultString;
     }
 
     private static String updateUser(String userString){

@@ -4,6 +4,8 @@ import ru.test.spark.entity.AbstractEntity;
 import ru.test.spark.entity.UserEntity;
 import ru.test.spark.utils.CommonUtils;
 
+import java.util.UUID;
+
 import static ru.test.spark.utils.CommonUtils.isNotNull;
 
 /**
@@ -17,8 +19,10 @@ public class UserDto extends AbstractDto {
     private String fio;
     private String phoneNumber;
     private String email;
-    private UserDto cheef;
-    private DepartmentDto department;
+    private UUID cheefId;
+    private String cheefFio;
+    private UUID departmentId;
+    private String departmentName;
 
     public UserDto(){
        super();
@@ -48,20 +52,36 @@ public class UserDto extends AbstractDto {
         this.email = email;
     }
 
-    public UserDto getCheef() {
-        return cheef;
+    public UUID getCheefId() {
+        return cheefId;
     }
 
-    public void setCheef(UserDto cheef) {
-        this.cheef = cheef;
+    public void setCheefId(UUID cheefId) {
+        this.cheefId = cheefId;
     }
 
-    public DepartmentDto getDepartment() {
-        return department;
+    public UUID getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartment(DepartmentDto department) {
-        this.department = department;
+    public void setDepartmentId(UUID departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getCheefFio() {
+        return cheefFio;
+    }
+
+    public void setCheefFio(String cheefFio) {
+        this.cheefFio = cheefFio;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     @Override
@@ -73,7 +93,19 @@ public class UserDto extends AbstractDto {
             this.setFio(userEntity.getFio());
             this.setEmail(userEntity.getEmail());
 
-            //TODO потом дописать вложенные сущности(как их передавать?)
+            if (isNotNull(userEntity.getCheef())) {
+                this.setCheefId(userEntity.getCheef().getId());
+                this.setCheefFio(userEntity.getCheef().getFio());
+                //тут потом можно добавить поля от вложенного объекта
+            }
+
+            if (isNotNull(userEntity.getDepartment())) {
+                this.setDepartmentId(userEntity.getDepartment().getId());
+                this.setDepartmentName(userEntity.getDepartment().getName());
+                //тут потом можно добавить поля от вложенного объекта
+            }
+
+
         }
     }
 
@@ -85,6 +117,8 @@ public class UserDto extends AbstractDto {
             if (isNotNull(this.getFio())) userEntity.setFio(this.getFio());
             if (isNotNull(this.getEmail())) userEntity.setEmail(this.getEmail());
             if (isNotNull(this.getPhoneNumber())) userEntity.setPhoneNumber(this.getPhoneNumber());
+
+            //тут не получится привязать к сущности вложенные объекты
         }
     }
 

@@ -6,6 +6,7 @@ import ru.test.spark.dto.UserDto;
 import ru.test.spark.utils.CommonUtils;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Сущность Пользователь
@@ -26,11 +27,14 @@ public class UserEntity extends AbstractEntity {
     @Column(name = CollectionsConst.Collections.Users.EMAIL)
     private String email;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = CollectionsConst.Collections.Users.CHEEF)
     private UserEntity cheef;
 
-    @ManyToOne
+    @OneToMany(mappedBy = "cheef", cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER)
+    private List<UserEntity> worker;
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = CollectionsConst.Collections.Users.DEPARTMENT)
     private DepartmentEntity department;
 

@@ -9,7 +9,6 @@ import ru.test.spark.entity.UserEntity;
 import ru.test.spark.filters.UserFilter;
 import ru.test.spark.service.interfaces.UserService;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +68,19 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userDao.getById(updateUserDto.getId());
         if (isNotNull(userEntity)){
             updateUserDto.generateEntityFromDto(userEntity);
+
+            if(isNotNull(updateUserDto.getCheefId())){
+                userEntity.setCheef(userDao.getById(updateUserDto.getCheefId()));
+            } else {
+                userEntity.setCheef(null);
+            }
+
+            if(isNotNull(updateUserDto.getDepartmentId())){
+                userEntity.setDepartment(departmentDao.getById(updateUserDto.getDepartmentId()));
+            } else {
+                userEntity.setCheef(null);
+            }
+
             userDao.update(userEntity);
             userDto = new UserDto();
             userDto.generateDtoFromEntity(userEntity);
@@ -82,6 +94,19 @@ public class UserServiceImpl implements UserService {
         UserEntity newUserEntity = new UserEntity();
         if (isNotNull(newUserDto)){
             newUserDto.generateEntityFromDto(newUserEntity);
+
+            if(isNotNull(newUserDto.getCheefId())){
+                newUserEntity.setCheef(userDao.getById(newUserDto.getCheefId()));
+            } else {
+                newUserEntity.setCheef(null);
+            }
+
+            if(isNotNull(newUserDto.getDepartmentId())){
+                newUserEntity.setCheef(userDao.getById(newUserDto.getDepartmentId()));
+            } else {
+                newUserEntity.setCheef(null);
+            }
+
             newUserEntity = userDao.insert(newUserEntity);
             newUserDto.generateDtoFromEntity(newUserEntity);
             return newUserDto;
