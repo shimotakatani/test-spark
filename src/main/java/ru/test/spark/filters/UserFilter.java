@@ -32,17 +32,6 @@ public class UserFilter extends AbstractFilter{
 
         StringBuilder resultString = new StringBuilder();
 
-//        UserDto newFilter = new UserDto();
-//        newFilter.setFio("Fcgfg");
-//        Field[] fields = newFilter.getClass().getFields();
-//        for (Field field : fields) {
-//            try {
-//                resultString.append(field.getName()).append(": ").append(field.get(this));
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
 
         if(isNotNull(this.getId())){
             resultString.append(getAndOption(CollectionsConst.Entity.Users.ENTITY_NAME, CollectionsConst.Entity.Abstract.ID, this.getId()));
@@ -65,6 +54,12 @@ public class UserFilter extends AbstractFilter{
         }
         if(isNotNull(this.getPhoneNumber())){
             resultString.append(getAndOption(CollectionsConst.Entity.Users.ENTITY_NAME, CollectionsConst.Entity.Users.PHONE_NUMBER, this.getPhoneNumber()));
+        }
+        if(isNotNull(this.getCheefId())){
+            resultString.append(getAndOption(CollectionsConst.Entity.Users.ENTITY_NAME, CollectionsConst.Entity.Users.CHEEF, this.getCheefId()));
+        }
+        if(isNotNull(this.getDepartmentId())){
+            resultString.append(getAndOption(CollectionsConst.Entity.Users.ENTITY_NAME, CollectionsConst.Entity.Users.DEPARTMENT, this.getDepartmentId()));
         }
         //todo пока с вложенными объектами не решено
 

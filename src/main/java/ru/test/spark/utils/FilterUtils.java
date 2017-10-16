@@ -22,8 +22,11 @@ public class FilterUtils {
             if ( field instanceof String){
                 return " AND entity." + fieldName + " like '%" + field + "%' ";
             }
-            if ( field instanceof UUID){
+            if ( field instanceof UUID && "id".equals(fieldName)){
                 return " AND entity." + fieldName + " = '" + field.toString() + "' ";
+            }
+            if ( field instanceof UUID){
+                return " AND entity." + fieldName + ".id = '" + field.toString() + "' ";
             }
 
 
