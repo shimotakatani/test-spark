@@ -9,5 +9,7 @@ package ru.test.spark.consts;
 public class MessageConst {
     public static final class ErrorMessage {
         public static final String errorRequestParam = "Неверные параметры запроса";
+        public static final String missIdParam = "Отсутствует id";
+        public static final String errorUpdate = "Ошибка обновления";
     }
 }

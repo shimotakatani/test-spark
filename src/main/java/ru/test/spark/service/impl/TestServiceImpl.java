@@ -2,6 +2,7 @@ package ru.test.spark.service.impl;
 
 import ru.test.spark.dao.interfaces.DepartmentDao;
 import ru.test.spark.dao.interfaces.UserDao;
+import ru.test.spark.dto.DepartmentDto;
 import ru.test.spark.dto.UserDto;
 import ru.test.spark.entity.UserEntity;
 import ru.test.spark.enums.EntityStatusEnum;
@@ -53,6 +54,17 @@ public class TestServiceImpl implements TestService {
         newUser.setFio("FIO" + generateRandomString());
         newUser.setEmail(generateRandomString());
         newUser.setPhoneNumber("+7" + generateRandomString());
+        return newUser;
+    }
+
+    public DepartmentDto newRandomDepartmentDto(){
+        DepartmentDto newUser = new DepartmentDto();
+        Calendar cal = Calendar.getInstance();
+        Long currentTime = cal.getTimeInMillis();
+        newUser.setCreateTime(currentTime);
+        newUser.setUpdateTime(currentTime);
+        newUser.setStatus(EntityStatusEnum.ACTIVE);
+        newUser.setName("Name" + generateRandomString());
         return newUser;
     }
 }

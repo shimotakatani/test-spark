@@ -54,17 +54,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long getUserDtoListCount(UserFilter filter) {
-        return null;
+        return userDao.getActiveCount(filter);
     }
 
     @Override
     public Long getUserDtoListCount() {
-        return null;
+        return userDao.getActiveCount();
     }
 
     @Override
     public UserDto updateUser(UserDto updateUserDto) {
-        return null;
+
+        UserDto userDto = null;
+        UserEntity userEntity = userDao.getById(updateUserDto.getId());
+        if (isNotNull(userEntity)){
+            updateUserDto.generateEntityFromDto(userEntity);
+            userDao.update(userEntity);
+            userDto = new UserDto();
+            userDto.generateDtoFromEntity(userEntity);
+        }
+
+        return userDto;
     }
 
     @Override
@@ -76,7 +86,7 @@ public class UserServiceImpl implements UserService {
             newUserDto.generateDtoFromEntity(newUserEntity);
             return newUserDto;
         }
-        return newUserDto; //todo здесь по идее должна быть сгенерирована ошибка
+        return null;
     }
 
     private List<UserDto> convertEntitiesToDtos(List<UserEntity> entityList){

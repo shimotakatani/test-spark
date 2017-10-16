@@ -29,6 +29,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.test.spark.utils.JsonUtils;
 
+import static ru.test.spark.utils.CommonUtils.isNotNull;
+import static ru.test.spark.utils.CommonUtils.isNotNullOrEmpty;
 import static spark.Spark.*;
 
 /**
@@ -50,10 +52,9 @@ public class UserResource {
         get("/" + CollectionsConst.Collections.Users.COLLECTION_NAME + "/getAll", (req, res) -> getAllUsers());
         get("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/getById", (req, res) -> getUser(req.queryParams("id")));
         get("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/filter", (req, res) -> getFilteredUsers(req.queryParams("user")));
-        post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/insert", (req, res) -> generateData());
-        post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/delete", (req, res) -> deleteUser());
-        post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/edit", (req, res) -> updateUser());
-        post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/setChef", (req, res) -> setChef());
+        post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/insert", (req, res) -> insertUser(req.body()));
+        post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/delete", (req, res) -> deleteUser(req.queryParams("id")));
+        post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/edit", (req, res) -> updateUser(req.body()));
     }
 
     private static String generateData(){
@@ -63,40 +64,60 @@ public class UserResource {
         return newUser.toString();
     }
 
-    private static String deleteUser(){
-        String id = "8b1616c1-edcf-4450-aa44-19f26ef82b65";
-        userDao.deleteById(UUID.fromString(id));
-        return "Delete user by id " + id;
+    private static String deleteUser(String id){
+        if(isNotNullOrEmpty(id)) {
+            userDao.deleteById(UUID.fromString(id));
+            return "Delete user by id " + id;
+        }
+        return MessageConst.ErrorMessage.errorRequestParam;
     }
 
     private static String getAllUsers(){
-        StringBuilder sb = new StringBuilder();
-        List<UserDto> users = userService.getUserDtoList(null);
-        users.forEach(user -> sb.append(user.toString()).append("\n"));
-        return sb.toString();
+        UserFilter filter = new UserFilter();
+        filter.normalizeLimits();
+
+        ListDto resultDto = new ListDto();
+
+        List<UserDto> users = userService.getUserDtoList();
+        resultDto.setData(users);
+        resultDto.setLimit(filter.getLimit());
+        resultDto.setPage(filter.getPage());
+        resultDto.setStart(filter.getStart());
+        resultDto.setCount(userService.getUserDtoListCount());
+
+        String resultString = null;
+        try {
+            resultString = mapper.writeValueAsString(resultDto);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return resultString;
     }
 
     private static String getFilteredUsers(String filterString){
 
         UserFilter filter = null;
         try {
-            filter = mapper.readValue(filterString, UserFilter.class);
+            if (isNotNull(filterString)) {
+                filter = mapper.readValue(filterString, UserFilter.class);
+            }
+            else {
+                filter = new UserFilter();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return MessageConst.ErrorMessage.errorRequestParam;
         }
         filter.normalizeLimits();
-        filter.setFio("FIO-2-2-9-9-11-3245");
-        filter.setCreateTime(1507906534037L);
 
         ListDto resultDto = new ListDto();
 
-        StringBuilder sb = new StringBuilder();
         List<UserDto> users = userService.getUserDtoList(filter);
         resultDto.setData(users);
         resultDto.setLimit(filter.getLimit());
         resultDto.setPage(filter.getPage());
         resultDto.setStart(filter.getStart());
+        resultDto.setCount(userService.getUserDtoListCount(filter));
 
         String resultString = null;
         try {
@@ -111,12 +132,65 @@ public class UserResource {
         return userService.getUserById(UUID.fromString(id)).toString();
     }
 
-    private static String updateUser(){
-        List<UserEntity> users = userDao.getAllActive();
-        Calendar cal = Calendar.getInstance();
-        users.get(0).setCreateTime(cal.getTimeInMillis());
-        UserEntity user = userDao.update(users.get(0));
-        return "Update user with id = " + user.getId().toString() + " at " + user.getCreateTime();
+    private static String updateUser(String userString){
+
+        UserDto userDto = null;
+        try {
+            if (isNotNull(userString)) {
+                userDto = mapper.readValue(userString, UserDto.class);
+            }
+            else {
+                userDto = new UserDto();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return MessageConst.ErrorMessage.errorRequestParam;
+        }
+
+        if ( ! isNotNull(userDto.getId())){
+            return MessageConst.ErrorMessage.missIdParam;
+        }
+
+        UserDto user = userService.updateUser(userDto);
+        if ( ! isNotNull(user)) {
+            return MessageConst.ErrorMessage.errorUpdate;
+        }
+        String resultString = null;
+        try {
+            resultString = mapper.writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "Update user: " + resultString;
+    }
+
+    private static String insertUser(String userString){
+
+        UserDto userDto = null;
+        try {
+            if (isNotNull(userString)) {
+                userDto = mapper.readValue(userString, UserDto.class);
+            }
+            else {
+                userDto = new UserDto();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return MessageConst.ErrorMessage.errorRequestParam;
+        }
+
+
+        UserDto user = userService.insertUser(userDto);
+        if ( ! isNotNull(user)) {
+            return MessageConst.ErrorMessage.errorUpdate;
+        }
+        String resultString = null;
+        try {
+            resultString = mapper.writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "Insert user: " + resultString;
     }
 
     private static String setChef(){

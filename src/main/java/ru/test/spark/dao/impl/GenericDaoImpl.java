@@ -117,7 +117,7 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
     public T update(T entity){
         session = HibernateUtils.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        session.merge(entity);
+        entity = (T)session.merge(entity);
         session.getTransaction().commit();
         return entity;
     }
@@ -126,7 +126,7 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
     public T insert(T entity) {
         session = HibernateUtils.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        session.merge(entity);
+        entity = (T) session.merge(entity);
         session.getTransaction().commit();
         return entity;
     }
@@ -135,16 +135,23 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
     public Long getActiveCount() {
         session = HibernateUtils.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        List<Long> entityList = session.createQuery("Select count(entity) FROM " + getEntityClass().getSimpleName() + " entity").getResultList();
+        Query query = session.createQuery("Select count(entity) FROM " + getEntityClass().getSimpleName() + " entity where entity.status = :status");
+        query.setParameter("status", EntityStatusEnum.ACTIVE);
+        List<Long> entityList = query.getResultList();
         session.getTransaction().commit();
         return CommonUtils.isNotNullOrEmpty(entityList) ? entityList.get(0) : 0L;
     }
 
-    @Override
     public Long getActiveCount(AbstractFilter filter) {
         session = HibernateUtils.getSessionFactory().getCurrentSession();
         session.beginTransaction();
-        List<Long> entityList = session.createQuery("Select count(entity) FROM " + getEntityClass().getSimpleName() + " entity where entity.status = :status").getResultList();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Select count(entity) FROM ").append(getEntityClass().getSimpleName()).append(" entity where entity.status = :status ");
+        sb.append(filter.getWhereLimitOrderString());
+        Query getQuery = session.createQuery(sb.toString());
+        filter.setLimitOption(getQuery);
+        getQuery.setParameter("status", EntityStatusEnum.ACTIVE);
+        List<Long> entityList = getQuery.getResultList();
         session.getTransaction().commit();
         return CommonUtils.isNotNullOrEmpty(entityList) ? entityList.get(0) : 0L;
     }

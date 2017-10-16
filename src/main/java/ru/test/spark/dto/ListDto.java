@@ -17,6 +17,8 @@ public class ListDto {
 
     private Long start;
 
+    private Long count;
+
     public List getData() {
         return data;
     }
@@ -47,5 +49,13 @@ public class ListDto {
 
     public void setStart(Long start) {
         this.start = start;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
     }
 }
