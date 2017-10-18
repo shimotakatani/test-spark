@@ -27,14 +27,14 @@ public class UserEntity extends AbstractEntity {
     @Column(name = CollectionsConst.Collections.Users.EMAIL)
     private String email;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = CollectionsConst.Collections.Users.CHEEF)
     private UserEntity cheef;
 
     @OneToMany(mappedBy = "cheef", cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER)
     private List<UserEntity> worker;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = CollectionsConst.Collections.Users.DEPARTMENT)
     private DepartmentEntity department;
 

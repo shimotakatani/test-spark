@@ -55,13 +55,16 @@ public class UserResource {
         post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/insert", (req, res) -> insertUser(req.body()));
         post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/delete", (req, res) -> deleteUser(req.queryParams("id")));
         post("/" +CollectionsConst.Collections.Users.COLLECTION_NAME + "/edit", (req, res) -> updateUser(req.body()));
+
+        //test resource
+        get("/generateResource", (req, res) -> generateData());
     }
 
     private static String generateData(){
-        UserDto newUser = testService.newRandomUserDto();
-        userService.insertUser(newUser);
+        testService.generateManyUsersAndDepartments();
 
-        return newUser.toString();
+
+        return "generate many entities";
     }
 
     private static String deleteUser(String id){

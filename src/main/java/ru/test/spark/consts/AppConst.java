@@ -13,4 +13,9 @@ public final class AppConst {
         public static final Integer HOST_PORT = 27017;
 
     }
+
+    public static final class Test{
+        public static final Long DEPARTMENT_GENERATE_COUNT = 2000L;
+        public static final Long USER_GENERATE_COUNT = 25000L;
+    }
 }

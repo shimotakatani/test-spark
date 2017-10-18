@@ -16,4 +16,6 @@ public interface TestService {
     UserDto newRandomUserDto();
 
     DepartmentDto newRandomDepartmentDto();
+
+    void generateManyUsersAndDepartments();
 }

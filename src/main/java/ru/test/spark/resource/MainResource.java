@@ -8,6 +8,7 @@ package ru.test.spark.resource;
  */
 
 import org.apache.log4j.BasicConfigurator;
+import ru.test.spark.consts.CollectionsConst;
 import ru.test.spark.logger.SparkUtils;
 import org.apache.log4j.Logger;
 import static spark.Spark.*;
@@ -26,6 +27,7 @@ public class MainResource {
 
         SparkUtils.createServerWithRequestLog(logger);
         port(4567);
+
 
         UserResource.publicResource();
         DepartmentResource.publicResource();
